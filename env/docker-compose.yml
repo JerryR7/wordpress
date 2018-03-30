@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  wordpress:
+    container_name: wordpress
+    image: wordpress:latest
+    ports:
+      - "10080:80"
+    volumes:
+      - /var/www/html/wordpress/:/var/www/htdocs/
+    links:
+      - db
+      - cache
+    restart: always
+
+  db:
+    container_name: db
+    image: mariadb:latest
+    env_file: db.env
+    restart: always
+
+  cache:
+    container_name: memcache
+    image: sylvainlasnier/memcached
+    restart: always
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    links:
+      - db:mysql
+    ports:
+      - 10084:80
+    environment:
+      MYSQL_USERNAME: magento2
+      MYSQL_ROOT_PASSWORD: magento2
+    restart: always
